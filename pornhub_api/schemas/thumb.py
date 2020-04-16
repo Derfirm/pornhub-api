@@ -5,6 +5,6 @@ __all__ = ("Thumb",)
 
 class Thumb(BaseModel):
     size: str
-    width: int
-    height: int
+    width: str
+    height: str
     src: AnyUrl

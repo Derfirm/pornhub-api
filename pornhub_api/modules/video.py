@@ -12,7 +12,7 @@ class Video(WebMasterUrlBuilder):
     def __init__(self, backend):
         self.backend = backend
 
-    def get_by_id(self, id: str, *, thumbsize: str = "small",) -> VideoResult:
+    def get_by_id(self, id: str, *, thumbsize: str = None) -> VideoResult:
         """
         :param id: id of requested video
         :param thumbsize: (Optional)

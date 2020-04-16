@@ -6,6 +6,7 @@ __all__ = ("Category", "CategoriesResult")
 
 
 class Category(BaseModel):
+    id: str
     category: str
 
 
