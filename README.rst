@@ -2,12 +2,34 @@
 Unofficial api for pornhub.com
 ===============================
 
+.. image:: https://travis-ci.org/derfirm/pornhub-api.svg?branch=master
+    :target: https://travis-ci.org/derfirm/pornhub-api
+
+.. image:: https://api.codacy.com/project/badge/Grade/227b9766e0ce43d1854b3ea28eb75d4d
+    :target: https://www.codacy.com/manual/Derfirm/pornhub-api
+
+.. image:: https://img.shields.io/pypi/v/pornhub-api.svg
+    :target: https://pypi.python.org/pypi/pornhub-api
+
+
 Key Features
-============
+____________
 - response are fully-annotated with pydantic_
 - rest without parsing
 
 .. _pydantic: https://pydantic-docs.helpmanual.io/
+
+
+Installing
+__________
+.. code:: bash
+
+    $ pip install pornhub-api
+
+Supported versions
+__________________
+- Python 3.7+
+
 
 Getting started
 ===============
@@ -24,7 +46,7 @@ Search Videos
 _____________
 .. code-block:: python
 
-    data = api.search(
+    data = api.search.search(
         "chechick",
         ordering="mostviewed",
         period="weekly",
