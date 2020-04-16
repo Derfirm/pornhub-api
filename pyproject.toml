@@ -1,0 +1,92 @@
+[tool.black]
+line-length = 88
+target-version = ["py36", "py37", "py38"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    pdms/templates
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.pip-cache
+  | \.poetry
+  | \.venv
+  | \.vscode
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+combine_as_imports = true
+default_section = "LOCALFOLDER"
+no_lines_before = "LOCALFOLDER"
+force_grid_wrap = false
+include_trailing_comma = true
+known_first_party = """
+  coub_api
+"""
+known_third_party = """
+  pydantic
+  pytest
+"""
+line_length = 88
+multi_line_output = 3
+length_sort = "1"
+not_skip = "__init__.py"
+sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+skip = ".eggs,.venv,venv"
+
+[tool.flake8]
+max-line-length=88
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.poetry]
+name = "pornhub-api"
+version = "0.1.0"
+description = ""
+authors = ["Andrew Grinevich <beule@gmail.com>"]
+readme = "README.rst"
+repository = "https://github.com/Derfirm/pornhub_api"
+license = "MIT"
+keywords = ["pornhub", "pornhub-api", "api-wrapper"]
+classifiers = [
+   'Development Status :: 2 - Pre-Alpha',
+   'Intended Audience :: Information Technology',
+   'Programming Language :: Python',
+   'License :: OSI Approved :: MIT License',
+   'Natural Language :: English',
+   'Operating System :: OS Independent',
+   'Programming Language :: Python',
+   'Programming Language :: Python :: 3',
+   'Programming Language :: Python :: 3.6',
+   'Programming Language :: Python :: 3.7',
+   'Topic :: Internet :: WWW/HTTP',
+   'Topic :: Software Development :: Libraries :: Python Modules',
+]
+packages = [
+    { include = "pornhub_api" },
+    { include = "README.rst" },
+    { include = "LICENSE" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+pydantic = "^1.4"
+requests = "^2.23.0"
+
+[tool.poetry.dev-dependencies]
+black = "^19.10b0"
+mypy = "^0.770"
+isort = "^4.3.21"
+bandit = "^1.6.2"
+pytest = "^5.4.1"
+pytest-cov = "^2.8.1"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

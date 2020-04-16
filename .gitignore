@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.coverage
+.venv
+.mypy_cache/
+virtualenv
+MANIFEST
+build/
+dist/
+.cache/
+*.egg-info
+.idea/
+.python-version

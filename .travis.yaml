@@ -1,0 +1,16 @@
+dist: xenial
+sudo: required
+
+language: python
+python:
+  - 3.6
+  - 3.7
+before_install:
+  - pip install codecov
+  - pip install poetry
+install:
+  - poetry install
+script: poetry run make check
+after_success: codecov
+notifications:
+  email: false
