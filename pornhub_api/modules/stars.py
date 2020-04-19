@@ -8,6 +8,10 @@ class Stars(WebMasterUrlBuilder):
     __slots__ = ("backend",)
 
     def __init__(self, backend):
+        """
+        gather available stars list
+        :param backend: request library
+        """
         self.backend = backend
 
     def all(self) -> StarResult:

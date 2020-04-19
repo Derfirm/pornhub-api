@@ -33,50 +33,38 @@ def load_fixture(request):
 
 
 def assert_response(response, expected_payload):
-    def _normalize(value):
-        if isinstance(value, UUID):
-            return str(value)
-        elif isinstance(value, datetime):
-            return str(value)
-        elif isinstance(value, Enum):
-            return value.value
-        elif isinstance(value, (Decimal, float)):
-            return str(value)
-        elif isinstance(value, AnyUrl):
-            return str(value)
-        elif value is None:
-            return None
-        else:
-            return value
-
-    def _process(data):
-        _data = {}
-
-        def _process_list(lst):
-            tmp_list = []
-            for v in lst:
-                if isinstance(v, dict):
-                    tmp_list.append(_process(v))
-                elif isinstance(v, list):
-                    tmp_list.append(_process_list(v))
-                else:
-                    tmp_list.append(_normalize(v))
-            return tmp_list
-
-        for key, value in data.items():
-            if isinstance(value, dict):
-                _data[key] = _process(value)
-            elif isinstance(value, list):
-                _data[key] = _process_list(value)
-            else:
-                _data[key] = _normalize(value)
-        return _data
-
     response_type = response.__class__
     # try load payload
     tmp_data = response_type.parse_obj(expected_payload)
     tmp_data.dict()
     # normalize response
-    actual_payload = _process(response.dict())
+    actual_payload = dict(_process(response.dict()))
     # compare schema and data
     assert not DeepDiff(expected_payload, actual_payload)
+
+
+def _normalize(value):
+    if isinstance(value, Enum):
+        return value.value
+    elif isinstance(value, (Decimal, float, UUID, datetime, AnyUrl)):
+        return str(value)
+    return value
+
+
+def _process(data):
+    def _process_list(lst):
+        for v in lst:
+            if isinstance(v, dict):
+                yield dict(_process(v))
+            elif isinstance(v, list):
+                yield _process_list(v)
+            else:
+                yield _normalize(v)
+
+    for key, value in data.items():
+        if isinstance(value, dict):
+            yield key, dict(_process(value))
+        elif isinstance(value, list):
+            yield key, list(_process_list(value))
+        else:
+            yield key, _normalize(value)
