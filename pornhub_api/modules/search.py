@@ -33,7 +33,7 @@ class Search(WebMasterUrlBuilder):
         :param phrase: Array. Used as pornstars filter.
         :param tags:
         :param period: Text. Only works with ordering parameter. Possible values are weekly, monthly, and alltime
-        :return:
+        :return: VideoSearchResult schema
         """
         url = self.build_url("/search")
         params = {"search": q, "page": page, "thumbsize": thumbsize}

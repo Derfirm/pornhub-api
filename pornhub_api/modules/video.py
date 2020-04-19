@@ -12,25 +12,25 @@ class Video(WebMasterUrlBuilder):
     def __init__(self, backend):
         self.backend = backend
 
-    def get_by_id(self, id: str, *, thumbsize: str = None) -> VideoResult:
+    def get_by_id(self, id_: str, *, thumbsize: str = None) -> VideoResult:
         """
-        :param id: id of requested video
+        :param id_: id of requested video
         :param thumbsize: (Optional)
         :return: Video schema
         """
         url = self.build_url("/video_by_id")
 
-        params = {"id": id}
+        params = {"id": id_}
         if thumbsize is not None:
             params["thumbsize"] = thumbsize
 
         data = self.backend.send_request("get", url, params=params)
         return VideoResult(**data.json())
 
-    def is_active(self, id: str) -> bool:
+    def is_active(self, id_: str) -> bool:
         url = self.build_url("/is_video_active")
-        data = self.backend.send_request("get", url, params={"id": id}).json()
-        assert data["active"]["video_id"] == id
+        data = self.backend.send_request("get", url, params={"id": id_}).json()
+        assert data["active"]["video_id"] == id_
 
         return bool(int(data["active"]["is_active"]))
 
