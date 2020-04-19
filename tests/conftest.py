@@ -57,7 +57,7 @@ def _process(data):
             if isinstance(v, dict):
                 yield dict(_process(v))
             elif isinstance(v, list):
-                yield _process_list(v)
+                yield list(_process_list(v))
             else:
                 yield _normalize(v)
 
