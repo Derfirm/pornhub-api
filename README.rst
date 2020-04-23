@@ -42,7 +42,7 @@ ___________________
     api = PornhubApi()
 
 Initiate with AioHttp backend
-___________________
+_____________________________
 
 .. code-block:: python
     import asyncio
