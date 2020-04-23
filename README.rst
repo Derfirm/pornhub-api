@@ -26,6 +26,13 @@ __________
 
     $ pip install pornhub-api
 
+or with aiohttp support
+
+.. code:: bash
+
+    $ pip install pornhub-api[aiohttp_backend]
+
+
 Supported versions
 __________________
 - Python 3.7+
