@@ -78,6 +78,7 @@ packages = [
 python = "^3.7"
 pydantic = "^1.4"
 requests = "^2.23.0"
+aiohttp = {version = "^3.6.2", optional = true}
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
@@ -89,6 +90,11 @@ pytest-cov = "^2.8.1"
 deepdiff = "^4.3.2"
 requests-mock = "^1.7.0"
 pytest-lazy-fixture = "^0.6.3"
+aioresponses = "^0.6.3"
+pytest-asyncio = "0.10.0"
+
+[tool.poetry.extras]
+aiohttp_backend = ["aiohttp"]
 
 [build-system]
 requires = ["poetry>=0.12"]

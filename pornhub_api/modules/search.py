@@ -49,5 +49,6 @@ class Search(WebMasterUrlBuilder):
         if period is not None and category is not None:
             params["period"] = period
 
-        data = self.backend.send_request("get", url, params=params)
-        return VideoSearchResult(**data.json())
+        return self.backend.send_request(
+            "get", url, params=params, response_schema=VideoSearchResult
+        )

@@ -16,10 +16,8 @@ class Stars(WebMasterUrlBuilder):
 
     def all(self) -> StarResult:
         url = self.build_url("/stars")
-        data = self.backend.send_request("get", url)
-        return StarResult(**data.json())
+        return self.backend.send_request("get", url, response_schema=StarResult)
 
     def all_detailed(self) -> StarDetailedResult:
         url = self.build_url("/stars_detailed")
-        data = self.backend.send_request("get", url)
-        return StarDetailedResult(**data.json())
+        return self.backend.send_request("get", url, response_schema=StarDetailedResult)

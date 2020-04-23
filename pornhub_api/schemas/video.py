@@ -7,7 +7,7 @@ from pornhub_api.schemas.tag import Tag
 from pornhub_api.schemas.thumb import Thumb
 from pornhub_api.schemas.pornstart import Pornstar
 
-__all__ = ("Video", "VideoResult", "Category")
+__all__ = ("Video", "VideoResult", "Category", "IsVideoActiveResult")
 
 
 class Category(BaseModel):
@@ -34,3 +34,11 @@ class Video(BaseModel):
 
 class VideoResult(BaseModel):
     video: Video
+
+
+class IsVideoActiveResult(BaseModel):
+    class _Active(BaseModel):
+        video_id: str
+        is_active: str
+
+    active: _Active

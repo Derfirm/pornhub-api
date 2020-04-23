@@ -5,7 +5,7 @@ Unofficial api for pornhub.com
 .. image:: https://travis-ci.org/derfirm/pornhub-api.svg?branch=master
     :target: https://travis-ci.org/derfirm/pornhub-api
 
-.. image:: https://api.codacy.com/project/badge/Grade/227b9766e0ce43d1854b3ea28eb75d4d
+.. image:: https://api.codacy.com/project/badge/Grade/72b5baaa2a7d438cbe725924954a62b2
     :target: https://www.codacy.com/manual/Derfirm/pornhub-api
 
 .. image:: https://img.shields.io/pypi/v/pornhub-api.svg
@@ -41,6 +41,24 @@ ___________________
 
     api = PornhubApi()
 
+Initiate with AioHttp backend
+___________________
+
+.. code-block:: python
+    import asyncio
+    from pornhub_api.backends.aiohttp import AioHttpBackend
+
+
+    async def execute():
+        backend = AioHttpBackend()
+        api = PornhubApi(backend=backend)
+        response = await api.video.get_by_id("ph560b93077ddae")
+        print(response.video.title)
+
+        await backend.close()
+
+    asyncio.run(execute())
+
 
 Search Videos
 _____________
@@ -69,7 +87,7 @@ Get single Video details
 ________________________
 .. code-block:: python
 
-   video = api.video.get_by_id("ph560b93077ddae")
+   video = api.video.get_by_id("ph560b93077ddae").video
    print(video.title)
 
 
@@ -85,7 +103,8 @@ Check Video availability
 _________________________
 .. code-block:: python
 
-   active = api.video.is_active("ph560b93077ddae")
+   response = api.video.is_active("ph560b93077ddae")
+   print(response.active.is_active)
 
 
 Search video by random tag and category
