@@ -1,6 +1,6 @@
 from pornhub_api.schemas.tag import TagsResult
 from pornhub_api.modules.base import WebMasterUrlBuilder
-from pornhub_api.schemas.video import VideoResult
+from pornhub_api.schemas.video import VideoResult, IsVideoActiveResult
 from pornhub_api.schemas.category import CategoriesResult
 
 __all__ = ("Video",)
@@ -24,24 +24,24 @@ class Video(WebMasterUrlBuilder):
         if thumbsize is not None:
             params["thumbsize"] = thumbsize
 
-        data = self.backend.send_request("get", url, params=params)
-        return VideoResult(**data.json())
+        return self.backend.send_request(
+            "get", url, params=params, response_schema=VideoResult
+        )
 
-    def is_active(self, id_: str) -> bool:
+    def is_active(self, id_: str) -> IsVideoActiveResult:
         url = self.build_url("/is_video_active")
-        data = self.backend.send_request("get", url, params={"id": id_}).json()
-        assert data["active"]["video_id"] == id_
-
-        return bool(int(data["active"]["is_active"]))
+        return self.backend.send_request(
+            "get", url, params={"id": id_}, response_schema=IsVideoActiveResult
+        )
 
     def categories(self) -> CategoriesResult:
         url = self.build_url("/categories")
-        data = self.backend.send_request("get", url)
-        return CategoriesResult(**data.json())
+        return self.backend.send_request("get", url, response_schema=CategoriesResult)
 
     def tags(self, literal: str):
         assert len(literal) == 1
 
         url = self.build_url("/tags")
-        data = self.backend.send_request("get", url, params={"list": literal})
-        return TagsResult(**data.json())
+        return self.backend.send_request(
+            "get", url, params={"list": literal}, response_schema=TagsResult
+        )

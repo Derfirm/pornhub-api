@@ -10,7 +10,7 @@ class PornhubApi:
         if backend is None:
             from pornhub_api.backends.requests import RequestsBackend
 
-            backend = RequestsBackend
+            backend = RequestsBackend()
 
         self.backend = backend
 
@@ -25,3 +25,6 @@ class PornhubApi:
     @property
     def stars(self):
         return Stars(backend=self.backend)
+
+    def __str__(self):
+        return f"<{self.__class__.__name__} with backend {self.backend.__class__.__name__}>"

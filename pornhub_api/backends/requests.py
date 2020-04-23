@@ -6,10 +6,9 @@ __all__ = ("RequestsBackend",)
 
 
 class RequestsBackend(Backend):
-    @staticmethod
-    def send_request(method: str, url: str, **kwargs):
+    def send_request(self, method: str, url: str, response_schema, **kwargs):
         response = requests.request(method, url, **kwargs)
         response.raise_for_status()
-        data = response
-        check_response(response)
-        return data
+        data = response.json()
+        check_response(data)
+        return response_schema.parse_obj(data)

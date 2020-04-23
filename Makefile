@@ -6,7 +6,7 @@ install-poetry:
 
 .PHONY: install-deps
 install-deps:
-	@$(POETRY) install -vv
+	@$(POETRY) install -E aiohttp_backend -vv
 
 .PHONY: fmt
 fmt:

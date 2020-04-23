@@ -9,7 +9,7 @@ before_install:
   - pip install codecov
   - pip install poetry
 install:
-  - poetry install
+  - poetry install -E aiohttp_backend
 script: poetry run make check
 after_success: codecov
 notifications:
