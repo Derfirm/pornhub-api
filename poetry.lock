@@ -151,7 +151,7 @@ description = "Deep Difference and Search of any Python object/data."
 name = "deepdiff"
 optional = false
 python-versions = ">=3.5"
-version = "5.0.0"
+version = "5.0.1"
 
 [package.dependencies]
 ordered-set = ">=4.0.1"
@@ -558,7 +558,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 aiohttp_backend = ["aiohttp"]
 
 [metadata]
-content-hash = "04114d9592c7d6938d9b65f1ad5236f46e9616c6db62b6a8d615234630227ae9"
+content-hash = "3a3f11e28e4ef3b6ab7d85af132bf533487d962aa3f5d48a066940a250c411fc"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -654,8 +654,8 @@ coverage = [
     {file = "coverage-5.1.tar.gz", hash = "sha256:f90bfc4ad18450c80b024036eaf91e4a246ae287701aaa88eaebebf150868052"},
 ]
 deepdiff = [
-    {file = "deepdiff-5.0.0-py3-none-any.whl", hash = "sha256:78df0316d42b8fb67a4ac09a959f9364f1d67a5d1a82bb3f505c006b8de4e887"},
-    {file = "deepdiff-5.0.0.tar.gz", hash = "sha256:fa97d1d4f2f55068dcd323252705ddeae0b94b9c164d28dfbda0e9fbf1497a62"},
+    {file = "deepdiff-5.0.1-py3-none-any.whl", hash = "sha256:05bb6241255f9a09c982e67b24bfc84437c2a4d602cef9e9b3ccfa54f0699ea2"},
+    {file = "deepdiff-5.0.1.tar.gz", hash = "sha256:1c1956b195b5cbf34505e23902a9e711d9c68fbb73a8d58a4b560fad16dae8b7"},
 ]
 gitdb = [
     {file = "gitdb-4.0.4-py3-none-any.whl", hash = "sha256:ba1132c0912e8c917aa8aa990bee26315064c7b7f171ceaaac0afeb1dc656c6a"},
