@@ -219,11 +219,11 @@ description = "A Python utility / library to sort Python imports."
 name = "isort"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "5.4.1"
+version = "5.5.0"
 
 [package.extras]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
-pipfile_deprecated_finder = ["pipreqs", "requirementslib", "tomlkit (>=0.5.3)"]
+pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
 requirements_deprecated_finder = ["pipreqs", "pip-api"]
 
 [[package]]
@@ -558,7 +558,8 @@ testing = ["jaraco.itertools", "func-timeout"]
 aiohttp_backend = ["aiohttp"]
 
 [metadata]
-content-hash = "1a1ed0a51954d13bdb79c5c832be24c0b14fdfb6874f28e429b847b7fbc099a4"
+content-hash = "1efb97b43eb29f7ce04cd75cb3f75848cd307ae177a0869d34ca626313347971"
+lock-version = "1.0"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -677,8 +678,8 @@ iniconfig = [
     {file = "iniconfig-1.0.0.tar.gz", hash = "sha256:aa0b40f50a00e72323cb5d41302f9c6165728fd764ac8822aa3fff00a40d56b4"},
 ]
 isort = [
-    {file = "isort-5.4.1-py3-none-any.whl", hash = "sha256:819fa99f2a9323025ade768e94b2e27447cd9b0a64595a90f21595e11151b788"},
-    {file = "isort-5.4.1.tar.gz", hash = "sha256:a4fb5fffc46494cda15e33a996c8e724f8e3db19682b84cc7c990b57f2941e9f"},
+    {file = "isort-5.5.0-py3-none-any.whl", hash = "sha256:8103bc070d9258fe97e82470cb30f0e4b730e94c44ac81ebae32b05d5a6c87ea"},
+    {file = "isort-5.5.0.tar.gz", hash = "sha256:0906e0e7092e060c05de709ad172e1ec1b26aa27fdd4e8093f257890cd881d18"},
 ]
 more-itertools = [
     {file = "more-itertools-8.2.0.tar.gz", hash = "sha256:b1ddb932186d8a6ac451e1d95844b382f55e12686d51ca0c68b6f61f2ab7a507"},
