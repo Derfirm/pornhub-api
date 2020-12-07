@@ -67,16 +67,16 @@ tests = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.i
 
 [[package]]
 name = "bandit"
-version = "1.6.2"
+version = "1.6.3"
 description = "Security oriented static analyser for python code."
 category = "dev"
 optional = false
-python-versions = "*"
+python-versions = ">=3.5"
 
 [package.dependencies]
 colorama = {version = ">=0.3.9", markers = "platform_system == \"Windows\""}
 GitPython = ">=1.0.1"
-PyYAML = ">=3.13"
+PyYAML = ">=5.3.1"
 six = ">=1.10.0"
 stevedore = ">=1.20.0"
 
@@ -544,7 +544,7 @@ aiohttp_backend = ["aiohttp"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "40a8fdb980044aab143d39f4939c3decbc1d032931ae73a72e1708b2f1b7ae04"
+content-hash = "d210f0808333ffa6dae84f8b2311063458102da6e611fe23eda4ee5d4426e9b9"
 
 [metadata.files]
 aiohttp = [
@@ -582,8 +582,8 @@ attrs = [
     {file = "attrs-19.3.0.tar.gz", hash = "sha256:f7b7ce16570fe9965acd6d30101a28f62fb4a7f9e926b3bbc9b61f8b04247e72"},
 ]
 bandit = [
-    {file = "bandit-1.6.2-py2.py3-none-any.whl", hash = "sha256:336620e220cf2d3115877685e264477ff9d9abaeb0afe3dc7264f55fa17a3952"},
-    {file = "bandit-1.6.2.tar.gz", hash = "sha256:41e75315853507aa145d62a78a2a6c5e3240fe14ee7c601459d0df9418196065"},
+    {file = "bandit-1.6.3-py2.py3-none-any.whl", hash = "sha256:2ff3fe35fe3212c0be5fc9c4899bd0108e2b5239c5ff62fb174639e4660fe958"},
+    {file = "bandit-1.6.3.tar.gz", hash = "sha256:d02dfe250f4aa2d166c127ad81d192579e2bfcdb8501717c0e2005e35a6bcf60"},
 ]
 black = [
     {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
