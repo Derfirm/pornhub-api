@@ -147,7 +147,7 @@ toml = ["toml"]
 
 [[package]]
 name = "deepdiff"
-version = "5.2.1"
+version = "5.2.2"
 description = "Deep Difference and Search of any Python object/data."
 category = "dev"
 optional = false
@@ -544,7 +544,7 @@ aiohttp_backend = ["aiohttp"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "4b097e861105ab80f5f382c6f86022d36a9aefb129f8d9ad337307a3fad96ef8"
+content-hash = "89d11fe29e8779fd563cdad372e780f072f1661edd70b18132699ae30164e03c"
 
 [metadata.files]
 aiohttp = [
@@ -638,8 +638,8 @@ coverage = [
     {file = "coverage-5.1.tar.gz", hash = "sha256:f90bfc4ad18450c80b024036eaf91e4a246ae287701aaa88eaebebf150868052"},
 ]
 deepdiff = [
-    {file = "deepdiff-5.2.1-py3-none-any.whl", hash = "sha256:5e2b90ebe9d371af493a893306546f69dc117e7a36596b97f8fe56869dd0c35d"},
-    {file = "deepdiff-5.2.1.tar.gz", hash = "sha256:2e368943dc257f6fa93d9ce4537dbcd4fea65098208a0f49f675cf40132c1a89"},
+    {file = "deepdiff-5.2.2-py3-none-any.whl", hash = "sha256:ca2484da3cc9ec944a998fb3d03062e64e4c74b84519fb8e5eea53be88514e54"},
+    {file = "deepdiff-5.2.2.tar.gz", hash = "sha256:752995dbd23e9971571c9f45b0bba9462cad3e968a505d644de492d6ff47d4fa"},
 ]
 gitdb = [
     {file = "gitdb-4.0.4-py3-none-any.whl", hash = "sha256:ba1132c0912e8c917aa8aa990bee26315064c7b7f171ceaaac0afeb1dc656c6a"},
