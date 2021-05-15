@@ -90,7 +90,7 @@ pytest-cov = "^2.11.1"
 deepdiff = "^5.2.2"
 requests-mock = "^1.8.0"
 pytest-lazy-fixture = "^0.6.3"
-aioresponses = "^0.6.4"
+aioresponses = "^0.7.2"
 pytest-asyncio = "0.14.0"
 
 [tool.poetry.extras]
