@@ -91,7 +91,7 @@ deepdiff = "^5.2.2"
 requests-mock = "^1.8.0"
 pytest-lazy-fixture = "^0.6.3"
 aioresponses = "^0.6.4"
-pytest-asyncio = "0.14.0"
+pytest-asyncio = "0.15.1"
 
 [tool.poetry.extras]
 aiohttp_backend = ["aiohttp"]
