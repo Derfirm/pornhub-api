@@ -84,7 +84,7 @@ aiohttp = {version = "^3.6.2", optional = true}
 black = "^20.8b1"
 mypy = "^0.800"
 isort = "^5.7.0"
-bandit = "^1.7.0"
+bandit = "^1.7.1"
 pytest = "^6.2.5"
 pytest-cov = "^2.11.1"
 deepdiff = "^5.2.2"
