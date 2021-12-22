@@ -82,7 +82,7 @@ aiohttp = {version = "^3.6.2", optional = true}
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
-mypy = "^0.800"
+mypy = "^0.921"
 isort = "^5.7.0"
 bandit = "^1.7.0"
 pytest = "^6.2.5"
