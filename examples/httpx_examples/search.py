@@ -3,12 +3,12 @@ from typing import AsyncIterable
 
 from pornhub_api import PornhubApi, exceptions
 from pornhub_api.schemas.video import Video
+from pornhub_api.backends.httpx import AsyncHttpxBackend
 from pornhub_api.schemas.search import VideoSearchResult
-from pornhub_api.backends.aiohttp import AioHttpBackend
 
 
 async def find_video_by_word(
-    word: str, backend: AioHttpBackend, pages=5
+    word: str, backend: AsyncHttpxBackend, pages=5
 ) -> AsyncIterable[Video]:
     page = 1
     while page <= pages:
@@ -28,9 +28,9 @@ async def find_video_by_word(
 
 
 async def main() -> None:
-    async with AioHttpBackend() as backend:
-        async for video in find_video_by_word("faines", backend=backend):
-            print(video.title)
+    async with AsyncHttpxBackend() as backend:
+        async for video in find_video_by_word("noway", backend=backend, pages=2):
+            print(video.json())
 
 
 if __name__ == "__main__":

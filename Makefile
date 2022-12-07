@@ -4,7 +4,7 @@ install-poetry:
 
 .PHONY: install-deps
 install-deps:
-	@poetry install -E aiohttp_backend -vv
+	@poetry install --all-extras -vv
 
 .PHONY: fmt
 fmt:
@@ -26,7 +26,7 @@ check-release:
 
 .PHONY: test
 test:
-	@poetry run pytest -vv --cov-report term-missing  --cov-report=xml --cov pornhub_api tests
+	@poetry run pytest -m "not webtest" -vv --cov-report term-missing  --cov-report=xml --cov pornhub_api tests
 
 .PHONY: lint-flake8
 flake8:
@@ -46,7 +46,7 @@ lint-black:
 
 .PHONY: lint-bandit
 lint-bandit:
-	@poetry run bandit -c pyproject.toml -r pornhub_api examples tests
+	@poetry run bandit -v -c "pyproject.toml" -r pornhub_api examples tests
 
 .PHONY: lint
 lint: lint-isort lint-flake8 lint-black lint-mypy lint-bandit
