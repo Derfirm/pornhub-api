@@ -668,7 +668,7 @@ httpx_backend = ["httpx"]
 [metadata]
 lock-version = "1.1"
 python-versions = "<3.11,>=3.8"
-content-hash = "253b581e6eb44e797e2b2bae43da739f0135305cb726b8ce8dcb2aa541b9ed5a"
+content-hash = "2f598c649848273969d835c9b34a0d6abec67bbdd87f7210f997941c21266195"
 
 [metadata.files]
 aiohttp = [

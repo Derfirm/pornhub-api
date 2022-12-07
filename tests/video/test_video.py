@@ -1,9 +1,16 @@
 import pytest
 
+from _pytest.fixtures import SubRequest
 
-@pytest.fixture(params=["ph5c66d850c33de"])
+
+@pytest.fixture(params=["ph5c66d850c33de", "ph6361a2b63a3e4", "ph59a86d7a6890b"])
 def video_id(request):
     return request.param
+
+
+@pytest.fixture(params=[pytest.lazy_fixture("video_id")])
+def is_active_video_id(request: SubRequest) -> str:
+    return f"is_active.{request.param}"
 
 
 @pytest.mark.parametrize(
@@ -20,7 +27,7 @@ def test_get_by_id(video_id, response_snapshot, api, requests_mock):
 
 
 @pytest.mark.parametrize(
-    "response_snapshot", [f"is_active.ph5c66d850c33de"], indirect=True
+    "response_snapshot", [pytest.lazy_fixture("is_active_video_id")], indirect=True
 )
 def test_is_active(video_id, response_snapshot, api, requests_mock):
     requests_mock.get(
