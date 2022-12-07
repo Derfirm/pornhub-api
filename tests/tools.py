@@ -19,7 +19,13 @@ def save_snapshots(data: Dict[str, Any], path: str, tags: List[str]):
         json.dump(data, fd)
 
 
+def video_download(phub_api: PornhubApi, video_id: str):
+    save_snapshots(
+        phub_api.video.is_active(video_id), path="video", tags=["is_active", video_id]
+    )
+    save_snapshots(phub_api.video.get_by_id(video_id), path="video", tags=[video_id])
+
+
 if __name__ == "__main__":
     api = PornhubApi(RawBackend())
-    result = api.search.search_videos(q="noway")
-    save_snapshots(result, path="backends", tags=["noway"])
+    video_download(api, "ph59a86d7a6890b")

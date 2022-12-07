@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Union
 from datetime import datetime
 
 from pydantic import Field, BaseModel, AnyHttpUrl
@@ -19,7 +19,7 @@ class Video(BaseModel):
     duration: str
     views: int
     video_id: str
-    rating: str
+    rating: Union[float, int]
     ratings: int
     url: AnyHttpUrl
     default_thumb: AnyHttpUrl

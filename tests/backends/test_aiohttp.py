@@ -17,7 +17,7 @@ async def api():
 class TestBackend:
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
-        "response_snapshot", [pytest.lazy_fixture("video_id")], indirect=True
+        "response_snapshot", [pytest.lazy_fixture("is_active_video_id")], indirect=True
     )
     async def test_ok(self, api, response_snapshot, video_id):
         with aioresponses() as m:

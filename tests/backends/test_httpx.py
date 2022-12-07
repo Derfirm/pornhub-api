@@ -16,9 +16,11 @@ async def api():
 class TestBackend:
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
-        "response_snapshot", [pytest.lazy_fixture("video_id")], indirect=True
+        "response_snapshot", [pytest.lazy_fixture("is_active_video_id")], indirect=True
     )
-    async def test_ok(self, api, response_snapshot, video_id, httpx_mock):
+    async def test_ok(
+        self, api: PornhubApi, response_snapshot, video_id: str, httpx_mock
+    ):
         httpx_mock.add_response(
             url=f"{api.video.url_builder.BASE_URL}/is_video_active?id={video_id}",
             json=response_snapshot,
