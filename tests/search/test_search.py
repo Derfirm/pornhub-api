@@ -6,13 +6,8 @@ def search_q(request):
     return request.param
 
 
-@pytest.fixture()
-def response_snapshot(search_q, load_fixture):
-    return load_fixture(f"{search_q}.json")
-
-
 @pytest.mark.parametrize(
-    "response_snapshot", ["beautiful", "pretty", "tagil", "empty"], indirect=True
+    "response_snapshot", [pytest.lazy_fixture("search_q")], indirect=True
 )
 def test_search_q(search_q, response_snapshot, requests_mock, api):
     requests_mock.get(
@@ -22,3 +17,4 @@ def test_search_q(search_q, response_snapshot, requests_mock, api):
     response = api.search.search_videos(search_q)
 
     response_snapshot.assert_equal(response)
+    assert response.size() == len(response_snapshot["videos"])
