@@ -42,17 +42,17 @@ def assert_response(response, expected_payload):
     response_type = response.__class__
     # try load payload
     tmp_data = response_type(**expected_payload)
-    tmp_data.dict()
+    assert response.dict(by_alias=True) == tmp_data.dict(by_alias=True)
     # normalize response
     actual_payload = dict(_process(response.dict(by_alias=True)))
     # compare schema and data
-    assert not DeepDiff(expected_payload, actual_payload)
+    assert not DeepDiff(dict(_process(expected_payload)), actual_payload)
 
 
 def _normalize(value):
     if isinstance(value, Enum):
         return value.value
-    elif isinstance(value, (Decimal, float, UUID, datetime, AnyUrl)):
+    elif isinstance(value, (Decimal, int, float, UUID, datetime, AnyUrl)):
         return str(value)
     return value
 

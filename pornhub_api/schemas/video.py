@@ -1,7 +1,7 @@
 from typing import Any, List, Union
 from datetime import datetime
 
-from pydantic import Field, BaseModel, AnyHttpUrl
+from pydantic import Field, BaseModel, AnyHttpUrl, validator
 
 from pornhub_api.schemas.tag import Tag
 from pornhub_api.schemas.thumb import Thumb
@@ -30,6 +30,12 @@ class Video(BaseModel):
     tags: List[Tag]
     categories: List[Category]
     pornstars: List[Pornstar]
+
+    @validator("rating")
+    def prettify_float(cls, value: Union[float, int]) -> Union[float, int]:  # type: ignore
+        if value == int(value):
+            return int(value)
+        return value
 
 
 class VideoResult(BaseModel):
