@@ -16,7 +16,8 @@ def response_snapshot(request, load_fixture):
 )
 def test_get_by_id(video_id, response_snapshot, api, requests_mock):
     requests_mock.get(
-        f"{api.video.BASE_URL}/video_by_id?id={video_id}", json=response_snapshot
+        f"{api.video.url_builder.BASE_URL}/video_by_id?id={video_id}",
+        json=response_snapshot,
     )
     response = api.video.get_by_id(video_id)
 
@@ -28,16 +29,21 @@ def test_get_by_id(video_id, response_snapshot, api, requests_mock):
 )
 def test_is_active(video_id, response_snapshot, api, requests_mock):
     requests_mock.get(
-        f"{api.video.BASE_URL}/is_video_active?id={video_id}", json=response_snapshot
+        f"{api.video.url_builder.BASE_URL}/is_video_active?id={video_id}",
+        json=response_snapshot,
     )
     response = api.video.is_active(video_id)
 
-    assert response
+    response_snapshot.assert_equal(response)
+    assert response.video_id == video_id
+    assert response.is_active
 
 
 @pytest.mark.parametrize("response_snapshot", ["categories"], indirect=True)
 def test_categories(response_snapshot, api, requests_mock):
-    requests_mock.get(f"{api.video.BASE_URL}/categories", json=response_snapshot)
+    requests_mock.get(
+        f"{api.video.url_builder.BASE_URL}/categories", json=response_snapshot
+    )
     response = api.video.categories()
 
     response_snapshot.assert_equal(response)
@@ -46,7 +52,9 @@ def test_categories(response_snapshot, api, requests_mock):
 @pytest.mark.parametrize("response_snapshot", ["tags.y"], indirect=True)
 @pytest.mark.parametrize("tag", ["y"])
 def test_tags(response_snapshot, api, requests_mock, tag):
-    requests_mock.get(f"{api.video.BASE_URL}/tags?list={tag}", json=response_snapshot)
+    requests_mock.get(
+        f"{api.video.url_builder.BASE_URL}/tags?list={tag}", json=response_snapshot
+    )
     response = api.video.tags(tag)
 
     response_snapshot.assert_equal(response)

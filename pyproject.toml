@@ -1,3 +1,6 @@
+[tool.bandit]
+skips = ["B101"]
+
 [tool.black]
 line-length = 88
 target-version = ["py36", "py37", "py38", "py39", "py310"]
@@ -63,8 +66,10 @@ classifiers = [
    'Operating System :: OS Independent',
    'Programming Language :: Python',
    'Programming Language :: Python :: 3',
-   'Programming Language :: Python :: 3.6',
    'Programming Language :: Python :: 3.7',
+   'Programming Language :: Python :: 3.8',
+   'Programming Language :: Python :: 3.9',
+   'Programming Language :: Python :: 3.10',
    'Topic :: Internet :: WWW/HTTP',
    'Topic :: Software Development :: Libraries :: Python Modules',
 ]
