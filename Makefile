@@ -30,15 +30,15 @@ test:
 
 .PHONY: lint-flake8
 flake8:
-	@poetry run flake8 pornhub_api tests
+	@poetry run flake8 pornhub_api examples tests
 
 .PHONY: lint-isort
 isort:
-	@poetry run isort -rc --diff pornhub_apii
+	@poetry run isort -rc --diff pornhub_api
 
 .PHONY: lint-mypy
 lint-mypy:
-	@poetry run mypy pornhub_api
+	@poetry run mypy pornhub_api examples
 
 .PHONY: lint-black
 lint-black:
@@ -46,7 +46,7 @@ lint-black:
 
 .PHONY: lint-bandit
 lint-bandit:
-	@poetry run bandit .
+	@poetry run bandit -c pyproject.toml -r pornhub_api examples tests
 
 .PHONY: lint
 lint: lint-isort lint-flake8 lint-black lint-mypy lint-bandit

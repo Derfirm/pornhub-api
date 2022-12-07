@@ -32,7 +32,7 @@ class TestBackend:
     async def test_ok(self, api, response_snapshot, video_id):
         with aioresponses() as m:
             m.get(
-                f"{api.video.BASE_URL}/is_video_active?id={video_id}",
+                f"{api.video.url_builder.BASE_URL}/is_video_active?id={video_id}",
                 payload=response_snapshot,
             )
             response = await api.video.is_active(video_id)

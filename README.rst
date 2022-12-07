@@ -72,7 +72,7 @@ Search Videos
 _____________
 .. code-block:: python
 
-    data = api.search.search(
+    data = api.search_videos.search_videos(
         "chechick",
         ordering="mostviewed",
         period="weekly",
@@ -125,7 +125,7 @@ _______________________________________
 
     tags = random.sample(api.video.tags("f").tags, 5)
     category = random.choice(api.video.categories().categories)
-    result = api.search.search(ordering="mostviewed", tags=tags, category=category)
+    result = api.search_videos.search_videos(ordering="mostviewed", tags=tags, category=category)
 
     print(result.size())
     for vid in result.videos:

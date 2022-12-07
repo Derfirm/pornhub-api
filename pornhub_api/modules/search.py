@@ -1,18 +1,20 @@
-from typing import List, Optional
+from typing import List, Union, Optional, Awaitable
 
 from pornhub_api.modules.base import WebMasterUrlBuilder
+from pornhub_api.backends.base import BackendT
 from pornhub_api.schemas.search import VideoSearchResult
 
 __all__ = ("Search",)
 
 
-class Search(WebMasterUrlBuilder):
-    __slots__ = ("backend",)
+class Search:
+    __slots__ = ("backend", "url_builder")
 
-    def __init__(self, backend):
+    def __init__(self, backend: BackendT):
         self.backend = backend
+        self.url_builder = WebMasterUrlBuilder()
 
-    def search(
+    def search_videos(
         self,
         q: str = "",
         *,
@@ -23,7 +25,7 @@ class Search(WebMasterUrlBuilder):
         phrase: List[str] = None,
         tags: List[str] = None,
         period: str = None,
-    ) -> VideoSearchResult:
+    ) -> Union[VideoSearchResult, Awaitable[VideoSearchResult]]:
         """
         :param q:
         :param page:
@@ -35,7 +37,7 @@ class Search(WebMasterUrlBuilder):
         :param period: Text. Only works with ordering parameter. Possible values are weekly, monthly, and alltime
         :return: VideoSearchResult schema
         """
-        url = self.build_url("/search")
+        url = self.url_builder.build_url("/search")
         params = {"search": q, "page": page, "thumbsize": thumbsize}
 
         if category is not None:

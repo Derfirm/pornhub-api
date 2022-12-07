@@ -35,10 +35,10 @@ def load_fixture(request):
 def assert_response(response, expected_payload):
     response_type = response.__class__
     # try load payload
-    tmp_data = response_type.parse_obj(expected_payload)
+    tmp_data = response_type(**expected_payload)
     tmp_data.dict()
     # normalize response
-    actual_payload = dict(_process(response.dict()))
+    actual_payload = dict(_process(response.dict(by_alias=True)))
     # compare schema and data
     assert not DeepDiff(expected_payload, actual_payload)
 

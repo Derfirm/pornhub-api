@@ -1,20 +1,32 @@
-from pornhub_api.backends.base import Backend, check_response
+from types import TracebackType
+from typing import Any, Dict, Type, Optional
+
+from pornhub_api.backends.base import BaseAsyncBackend
 import aiohttp
 
 __all__ = ("AioHttpBackend",)
 
 
-class AioHttpBackend(Backend):
+class AioHttpBackend(BaseAsyncBackend):
     def __init__(self):
         self._session = aiohttp.ClientSession()
 
-    async def send_request(self, method: str, url: str, response_schema, **kwargs):
+    async def __aenter__(self) -> "AioHttpBackend":
+        return self
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
+    ):
+        await self.close()
+
+    async def _make_request(self, method: str, url: str, **kwargs) -> Dict[str, Any]:
         async with self._session.request(method, url, **kwargs) as response:
             response.raise_for_status()
             data = await response.json()
-
-        check_response(data)
-        return response_schema(**data)
+        return data
 
     async def close(self):
         await self._session.close()
