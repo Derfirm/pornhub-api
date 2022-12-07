@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 .coverage
+coverage.xml
 .venv
 .mypy_cache/
 virtualenv

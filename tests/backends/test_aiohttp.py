@@ -1,8 +1,8 @@
 import pytest
-from aioresponses import aioresponses
 
 from pornhub_api import PornhubApi
 from pornhub_api.backends.aiohttp import AioHttpBackend
+from aioresponses import aioresponses
 
 aiohttp = pytest.importorskip("aiohttp")
 

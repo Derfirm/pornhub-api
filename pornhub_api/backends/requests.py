@@ -1,6 +1,5 @@
-import requests
-
 from pornhub_api.backends.base import Backend, check_response
+import requests
 
 __all__ = ("RequestsBackend",)
 
