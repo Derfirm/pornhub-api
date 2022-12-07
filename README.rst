@@ -119,7 +119,6 @@ Search video by random tag and category
 _______________________________________
 .. code-block:: python
 
-
     import random
     api = PornhubApi()
 
