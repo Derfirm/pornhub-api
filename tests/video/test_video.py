@@ -6,11 +6,6 @@ def video_id(request):
     return request.param
 
 
-@pytest.fixture()
-def response_snapshot(request, load_fixture):
-    return load_fixture(f"{request.param}.json")
-
-
 @pytest.mark.parametrize(
     "response_snapshot", [pytest.lazy_fixture("video_id")], indirect=True
 )
