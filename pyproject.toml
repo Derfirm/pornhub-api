@@ -48,6 +48,12 @@ max-line-length=88
 ignore_missing_imports = true
 no_implicit_optional = false
 
+[tool.pytest.ini_options]
+markers = [
+    "webtest: marks tests as doing real http-call (deselect with '-m \"not webtest\"')",
+    "serial",
+]
+
 [tool.poetry]
 name = "pornhub-api"
 version = "0.2.0"
@@ -84,23 +90,26 @@ python = "<3.11,>=3.8"
 pydantic = ">=1.4"
 requests = ">=2.23.0"
 aiohttp = {version = ">=3.6.2", optional = true}
+httpx = {version = ">=0.23.1", optional = true}
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.10"
 mypy = "==0.991"
 isort = "^5.7.0"
-bandit = "^1.7.0"
-pytest = "^6.2.5"
+bandit = {extras = ["toml"], version = ">=1.7.4"}
+pytest = ">=6.2.5"
 pytest-cov = ">=2.11.1"
 deepdiff = "^5.8.0"
 requests-mock = "^1.8.0"
 pytest-lazy-fixture = "^0.6.3"
 aioresponses = ">=0.6.4"
-pytest-asyncio = "^0.14.0"
+pytest-asyncio = ">=0.14.0"
 types-requests = "^2.28.11.5"
+pytest-httpx = "^0.21.2"
 
 [tool.poetry.extras]
 aiohttp_backend = ["aiohttp"]
+httpx_backend = ["httpx"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
