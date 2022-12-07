@@ -6,10 +6,10 @@ from pathlib import Path
 from datetime import datetime
 
 import pytest
-from deepdiff import DeepDiff
 from pydantic.networks import AnyUrl
 
 from pornhub_api import PornhubApi
+from deepdiff import DeepDiff
 
 
 @pytest.fixture

@@ -1,6 +1,5 @@
-import aiohttp
-
 from pornhub_api.backends.base import Backend, check_response
+import aiohttp
 
 __all__ = ("AioHttpBackend",)
 

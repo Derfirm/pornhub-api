@@ -1,16 +1,14 @@
-POETRY ?= $(HOME)/.poetry/bin/poetry
-
 .PHONY: install-poetry
 install-poetry:
 	@curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
 
 .PHONY: install-deps
 install-deps:
-	@$(POETRY) install -E aiohttp_backend -vv
+	@poetry install -E aiohttp_backend -vv
 
 .PHONY: fmt
 fmt:
-	@poetry run isort --recursive .
+	@poetry run isort .
 	@poetry run black .
 
 .PHONY: clean
@@ -28,7 +26,7 @@ check-release:
 
 .PHONY: test
 test:
-	@poetry run py.test -vv --cov-report term-missing --cov=pornhub_api tests
+	@poetry run pytest -vv --cov-report term-missing  --cov-report=xml --cov pornhub_api tests
 
 .PHONY: lint-flake8
 flake8:
