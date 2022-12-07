@@ -10,6 +10,7 @@ from pydantic.networks import AnyUrl
 
 from pornhub_api import PornhubApi
 from deepdiff import DeepDiff
+from _pytest.fixtures import SubRequest
 
 
 @pytest.fixture
@@ -18,7 +19,7 @@ def api():
 
 
 @pytest.fixture(scope="module")
-def load_fixture(request):
+def load_fixture(request: SubRequest):
     class CompareDict(dict):
         def assert_equal(self, response):
             assert_response(response, dict(self))
@@ -30,6 +31,11 @@ def load_fixture(request):
             return CompareDict(json.load(f))
 
     return loader
+
+
+@pytest.fixture()
+def response_snapshot(request: SubRequest, load_fixture):
+    return load_fixture(f"{request.param}.json")
 
 
 def assert_response(response, expected_payload):

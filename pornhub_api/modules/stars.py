@@ -7,8 +7,8 @@ from pornhub_api.backends.base import BackendT
 __all__ = ("Stars",)
 
 
-class Stars(WebMasterUrlBuilder):
-    __slots__ = ("backend",)
+class Stars:
+    __slots__ = ("backend", "url_builder")
 
     def __init__(self, backend: BackendT):
         """
@@ -16,11 +16,12 @@ class Stars(WebMasterUrlBuilder):
         :param backend: request library
         """
         self.backend = backend
+        self.url_builder = WebMasterUrlBuilder()
 
     def all(self) -> Union[StarResult, Awaitable[StarResult]]:
-        url = self.build_url("/stars")
+        url = self.url_builder.build_url("/stars")
         return self.backend.send_request("get", url, response_schema=StarResult)
 
     def all_detailed(self) -> Union[StarDetailedResult, Awaitable[StarDetailedResult]]:
-        url = self.build_url("/stars_detailed")
+        url = self.url_builder.build_url("/stars_detailed")
         return self.backend.send_request("get", url, response_schema=StarDetailedResult)
