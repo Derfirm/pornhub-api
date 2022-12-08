@@ -4,25 +4,12 @@ updates:
   directory: "/"
   schedule:
     interval: daily
-    time: "03:00"
+    time: "02:00"
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: black
-    versions:
-    - 21.4b0
-    - 21.4b1
-  - dependency-name: pytest-asyncio
-    versions:
-    - 0.15.0
-  - dependency-name: deepdiff
-    versions:
-    - 5.2.3
-  - dependency-name: pydantic
-    versions:
-    - "1.8"
-  - dependency-name: aiohttp
-    versions:
-    - 3.7.3
-  - dependency-name: aioresponses
-    versions:
-    - 0.7.1
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "02:00"
+  open-pull-requests-limit: 10
+

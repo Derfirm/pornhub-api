@@ -30,8 +30,13 @@ or with aiohttp support
 
 .. code:: bash
 
-    $ pip install pornhub-api[aiohttp_backend]
+    $ pip install pornhub-api[aiohttp-backend]
 
+or with httpx support
+
+.. code:: bash
+
+    $ pip install pornhub-api[httpx-backend]
 
 Supported versions
 __________________
@@ -58,12 +63,10 @@ _____________________________
 
 
     async def execute():
-        backend = AioHttpBackend()
-        api = PornhubApi(backend=backend)
-        response = await api.video.get_by_id("ph560b93077ddae")
-        print(response.video.title)
-
-        await backend.close()
+        async with AioHttpBackend() as backend:
+            api = PornhubApi(backend=backend)
+            video = await api.video.get_by_id("ph560b93077ddae")
+            print(video.title)
 
     asyncio.run(execute())
 
@@ -72,13 +75,13 @@ Search Videos
 _____________
 .. code-block:: python
 
-    data = api.search_videos.search_videos(
+    videos = api.search_videos.search_videos(
         "chechick",
         ordering="mostviewed",
         period="weekly",
         tags=["black"],
     )
-    for vid in data.videos:
+    for vid in videos:
         print(vid.title, vid.video_id)
 
 Get Stars
@@ -95,7 +98,7 @@ Get single Video details
 ________________________
 .. code-block:: python
 
-   video = api.video.get_by_id("ph560b93077ddae").video
+   video = api.video.get_by_id("ph560b93077ddae")
    print(video.title)
 
 
@@ -112,7 +115,7 @@ _________________________
 .. code-block:: python
 
    response = api.video.is_active("ph560b93077ddae")
-   print(response.active.is_active)
+   print(response.is_active)
 
 
 Search video by random tag and category
@@ -125,8 +128,8 @@ _______________________________________
 
     tags = random.sample(api.video.tags("f").tags, 5)
     category = random.choice(api.video.categories().categories)
-    result = api.search_videos.search_videos(ordering="mostviewed", tags=tags, category=category)
+    result = api.search.search_videos(ordering="mostviewed", tags=tags, category=category)
 
     print(result.size())
-    for vid in result.videos:
+    for vid in result:
         print(vid.title, vid.url)
