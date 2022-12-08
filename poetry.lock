@@ -662,13 +662,13 @@ idna = ">=2.0"
 multidict = ">=4.0"
 
 [extras]
-aiohttp_backend = ["aiohttp"]
-httpx_backend = ["httpx"]
+aiohttp-backend = ["aiohttp"]
+httpx-backend = ["httpx"]
 
 [metadata]
 lock-version = "1.1"
 python-versions = "<3.11,>=3.8"
-content-hash = "2f598c649848273969d835c9b34a0d6abec67bbdd87f7210f997941c21266195"
+content-hash = "797d37c83cc8b31f42291b18ae2537ae423831b9dd64ce2809359e957c36a442"
 
 [metadata.files]
 aiohttp = [
