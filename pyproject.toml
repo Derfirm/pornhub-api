@@ -86,7 +86,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "<3.11,>=3.8"
+python = "<3.12,>=3.8"
 pydantic = ">=1.4"
 requests = ">=2.23.0"
 aiohttp = {version = ">=3.6.2", optional = true}
