@@ -93,7 +93,7 @@ aiohttp = {version = ">=3.6.2", optional = true}
 httpx = {version = ">=0.23.1", optional = true}
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.10"
+black = ">=22.10,<24.0"
 mypy = "==0.991"
 isort = "^5.7.0"
 bandit = {extras = ["toml"], version = ">=1.7.4"}
