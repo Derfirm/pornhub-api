@@ -934,18 +934,18 @@ testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtuale
 
 [[package]]
 name = "pytest-httpx"
-version = "0.21.2"
+version = "0.21.3"
 description = "Send responses to httpx."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pytest_httpx-0.21.2-py3-none-any.whl", hash = "sha256:a6ea51ab4e603507b4e91ac868e62c8a40dde85ded9f5dd71d6e29b0e8d5a217"},
-    {file = "pytest_httpx-0.21.2.tar.gz", hash = "sha256:39596a2caa7aeb384de7f1cf134bcc4595177a449af7d0fc9bd5916cad515464"},
+    {file = "pytest_httpx-0.21.3-py3-none-any.whl", hash = "sha256:50b52b910f6f6cfb0aa65039d6f5bedb6ae3a0c02a98c4a7187543fe437c428a"},
+    {file = "pytest_httpx-0.21.3.tar.gz", hash = "sha256:edcb62baceffbd57753c1a7afc4656b0e71e91c7a512e143c0adbac762d979c1"},
 ]
 
 [package.dependencies]
 httpx = "==0.23.*"
-pytest = ">=6,<8"
+pytest = ">=6.0,<8.0"
 
 [package.extras]
 testing = ["pytest-asyncio (==0.20.*)", "pytest-cov (==4.*)"]
