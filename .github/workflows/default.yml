@@ -26,7 +26,7 @@ jobs:
       - run: poetry lock --check
         if: matrix.python-version == 3.11
       - run: make test
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v3
         if: matrix.python-version == 3.11
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
