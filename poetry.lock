@@ -370,13 +370,13 @@ toml = ["tomli"]
 
 [[package]]
 name = "deepdiff"
-version = "6.4.1"
+version = "6.6.1"
 description = "Deep Difference and Search of any Python object/data. Recreate objects by adding adding deltas to each other."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "deepdiff-6.4.1-py3-none-any.whl", hash = "sha256:065cdbbe62f66447cf507b32351579ffcc4a80bb28f567ac27e92a21ddca99f9"},
-    {file = "deepdiff-6.4.1.tar.gz", hash = "sha256:744c4e54ff83eaa77a995b3311dccdce6ee67773335a34a5ef269fa048005457"},
+    {file = "deepdiff-6.6.1-py3-none-any.whl", hash = "sha256:891b3cb12837e5d376ac0b58f4c8a2764e3a8bbceabb7108ff82235f1f2c4460"},
+    {file = "deepdiff-6.6.1.tar.gz", hash = "sha256:75c75b1511f0e48edef2b70d785a9c32b2631666b465fa8c32270a77a7b950b5"},
 ]
 
 [package.dependencies]
