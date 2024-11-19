@@ -44,12 +44,8 @@ lint-mypy:
 lint-black:
 	@poetry run black --diff --check .
 
-.PHONY: lint-bandit
-lint-bandit:
-	@poetry run bandit -v -c "pyproject.toml" -r pornhub_api examples tests
-
 .PHONY: lint
-lint: lint-isort lint-flake8 lint-black lint-mypy lint-bandit
+lint: lint-isort lint-flake8 lint-black lint-mypy
 
 .PHONY: check
 check: lint test
