@@ -53,7 +53,7 @@ markers = [
 
 [tool.poetry]
 name = "pornhub-api"
-version = "0.3.0"
+version = "0.4.0"
 description = ""
 authors = ["Andrew Grinevich <beule@gmail.com>"]
 readme = "README.rst"
