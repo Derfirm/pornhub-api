@@ -91,7 +91,7 @@ aiohttp = "^3.11.5"
 [tool.poetry.group.dev.dependencies]
 black = ">=22.10,<25.0"
 mypy = "==1.10.0"
-isort = "^5.7.0"
+isort = "^6.0.0"
 pytest = ">=6.2.5"
 pytest-cov = ">=2.11.1"
 deepdiff = ">=5.8,<7.0"
