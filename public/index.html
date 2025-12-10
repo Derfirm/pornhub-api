@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PACP | Personalized Adult Content Platform</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ph: {
+                            orange: '#ffa31a',
+                            black: '#0f0f0f',
+                            gray: '#1b1b1b',
+                            light: '#282828'
+                        },
+                        pacp: {
+                            intense: '#8B0000', // Deep Crimson
+                            soft: '#FF69B4',    // Hot Pink
+                            retro: '#4169E1',   // Royal Blue
+                            amateur: '#32CD32'  // Lime Green
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #030303; /* Ultra Dark */
+            color: #e5e5e5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f0f0f; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ffa31a; }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 30px -10px rgba(255, 163, 26, 0.15);
+            z-index: 10;
+        }
+
+        /* Dynamic Gradients based on Vibe */
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #ffa31a, #ff6b6b);
+        }
+
+        /* Micro-interactions */
+        .btn-press:active { transform: scale(0.95); }
+
+        /* Privacy Blur */
+        .privacy-blur { filter: blur(12px); transition: filter 0.3s ease; }
+        .privacy-blur:hover { filter: blur(0); }
+
+        [v-cloak] { display: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-ph-orange selection:text-black">
+
+    <div id="app" v-cloak class="flex-grow flex flex-col relative">
+
+        <!-- Privacy/Focus Mode Overlay (if needed) -->
+        <div v-if="focusMode" class="fixed inset-0 bg-black/95 z-[60] flex items-center justify-center pointer-events-none transition-opacity duration-500">
+            <div class="text-center animate-pulse-slow">
+                <div class="text-6xl mb-4">👁️</div>
+                <p class="text-gray-500 tracking-widest uppercase text-xs">Focus Mode Active</p>
+            </div>
+        </div>
+
+        <!-- Onboarding Modal (First Time User) -->
+        <transition name="fade">
+            <div v-if="showOnboarding" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-md">
+                <div class="max-w-2xl w-full p-8 bg-ph-gray rounded-2xl border border-gray-800 shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-ph-orange to-red-600"></div>
+
+                    <div class="text-center mb-8">
+                        <h1 class="text-4xl font-bold mb-2">Initialize <span class="gradient-text">PACP</span></h1>
+                        <p class="text-gray-400">Personalized Adult Content Platform. Private. Local. Intense.</p>
+                    </div>
+
+                    <!-- Step 1: Vibe Selection -->
+                    <div v-if="onboardingStep === 1" class="space-y-6 animate-slide-up">
+                        <h2 class="text-xl font-semibold text-center text-white">Select Your Baseline Vibe</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button @click="setVibe('intense')" class="p-6 rounded-xl bg-black border border-gray-800 hover:border-red-600 hover:bg-ph-light transition-all group text-left">
+                                <div class="text-3xl mb-2 group-hover:scale-110 transition-transform origin-left">🔥</div>
+                                <h3 class="font-bold text-white group-hover:text-red-500">Intense</h3>
+                                <p class="text-xs text-gray-500 mt-1">High energy, fast paced, rougher edges.</p>
+                            </button>
+                            <button @click="setVibe('soft')" class="p-6 rounded-xl bg-black border border-gray-800 hover:border-pink-500 hover:bg-ph-light transition-all group text-left">
+                                <div class="text-3xl mb-2 group-hover:scale-110 transition-transform origin-left">🌸</div>
+                                <h3 class="font-bold text-white group-hover:text-pink-500">Soft</h3>
+                                <p class="text-xs text-gray-500 mt-1">Sensual, romantic, slow build-up.</p>
+                            </button>
+                            <button @click="setVibe('retro')" class="p-6 rounded-xl bg-black border border-gray-800 hover:border-blue-500 hover:bg-ph-light transition-all group text-left">
+                                <div class="text-3xl mb-2 group-hover:scale-110 transition-transform origin-left">📼</div>
+                                <h3 class="font-bold text-white group-hover:text-blue-500">Retro</h3>
+                                <p class="text-xs text-gray-500 mt-1">Classic, vintage, golden age.</p>
+                            </button>
+                            <button @click="setVibe('amateur')" class="p-6 rounded-xl bg-black border border-gray-800 hover:border-green-500 hover:bg-ph-light transition-all group text-left">
+                                <div class="text-3xl mb-2 group-hover:scale-110 transition-transform origin-left">📹</div>
+                                <h3 class="font-bold text-white group-hover:text-green-500">Amateur</h3>
+                                <p class="text-xs text-gray-500 mt-1">Real, homemade, POV, authentic.</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Biological Calibration -->
+                    <div v-if="onboardingStep === 2" class="space-y-8 animate-slide-up">
+                        <h2 class="text-xl font-semibold text-center text-white">Biological Calibration</h2>
+
+                        <div class="space-y-4">
+                            <label class="block">
+                                <span class="text-sm text-gray-400 flex justify-between">
+                                    <span>Intensity Tolerance</span>
+                                    <span class="text-ph-orange font-mono">{{ prefs.intensity }}/10</span>
+                                </span>
+                                <input type="range" v-model="prefs.intensity" min="1" max="10" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-ph-orange mt-2">
+                            </label>
+
+                            <label class="block">
+                                <span class="text-sm text-gray-400 flex justify-between">
+                                    <span>Novelty Seeking (Dopamine)</span>
+                                    <span class="text-ph-orange font-mono">{{ prefs.novelty }}/10</span>
+                                </span>
+                                <input type="range" v-model="prefs.novelty" min="1" max="10" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-ph-orange mt-2">
+                            </label>
+                        </div>
+
+                        <button @click="finishOnboarding" class="w-full py-4 bg-ph-orange text-black font-bold rounded-xl hover:bg-white hover:scale-[1.02] transition-all shadow-lg btn-press">
+                            Enter Experience
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Main UI -->
+        <div v-if="!showOnboarding" class="flex flex-col min-h-screen">
+
+            <!-- Minimal Navbar -->
+            <nav class="sticky top-0 z-50 bg-ph-black/90 backdrop-blur-lg border-b border-gray-800 transition-all duration-300" :class="{'py-2': isScrolled, 'py-4': !isScrolled}">
+                <div class="container mx-auto px-4 flex items-center justify-between">
+                    <!-- Brand -->
+                    <div class="flex items-center gap-3 cursor-pointer group" @click="goHome">
+                        <div class="w-8 h-8 bg-white rounded flex items-center justify-center font-bold text-black text-sm group-hover:bg-ph-orange transition-colors">P</div>
+                        <div class="hidden md:block">
+                            <span class="font-bold tracking-tight text-white">PACP</span>
+                            <span class="text-xs text-gray-500 block uppercase tracking-widest group-hover:text-ph-orange transition-colors">Private</span>
+                        </div>
+                    </div>
+
+                    <!-- Search Bar (Morphing) -->
+                    <div class="flex-1 max-w-xl mx-6 relative">
+                        <div class="relative group">
+                            <input
+                                v-model="searchQuery"
+                                @keyup.enter="performSearch"
+                                type="text"
+                                class="w-full bg-ph-light border border-gray-700 text-gray-200 px-5 py-2.5 rounded-full focus:outline-none focus:border-ph-orange focus:ring-1 focus:ring-ph-orange transition-all pl-10 placeholder-gray-600 text-sm"
+                                :placeholder="dynamicPlaceholder"
+                            >
+                            <svg class="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-ph-orange transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </div>
+
+                    <!-- Mood/Profile Toggles -->
+                    <div class="flex items-center gap-4">
+                        <!-- Mood Selector -->
+                        <div class="relative group hidden sm:block">
+                            <button class="flex items-center gap-2 text-xs font-mono uppercase text-gray-400 hover:text-white transition-colors border border-gray-800 px-3 py-1.5 rounded-full bg-ph-light">
+                                <span class="w-2 h-2 rounded-full" :class="moodColor"></span>
+                                {{ currentMood }}
+                            </button>
+                            <!-- Dropdown -->
+                            <div class="absolute right-0 top-full mt-2 w-32 bg-ph-light border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 p-1">
+                                <button @click="setMood('relaxed')" class="w-full text-left px-3 py-2 text-xs text-gray-300 hover:bg-white/10 rounded">😌 Relaxed</button>
+                                <button @click="setMood('horny')" class="w-full text-left px-3 py-2 text-xs text-gray-300 hover:bg-white/10 rounded">😈 Horny</button>
+                                <button @click="setMood('stressed')" class="w-full text-left px-3 py-2 text-xs text-gray-300 hover:bg-white/10 rounded">😫 Stressed</button>
+                            </div>
+                        </div>
+
+                        <!-- Source Toggle -->
+                         <button @click="toggleSource" class="w-8 h-8 rounded-full bg-ph-light border border-gray-700 flex items-center justify-center text-xs font-bold hover:border-ph-orange transition-colors" :title="source">
+                            {{ source === 'pornhub' ? 'PH' : (source === 'redtube' ? 'RT' : 'HY') }}
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="container mx-auto px-4 py-8 flex-grow">
+
+                <!-- Welcome / Recs Header -->
+                <div v-if="!currentVideo && !loading && videos.length > 0" class="mb-8 animate-slide-up">
+                    <div class="flex items-end justify-between mb-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white mb-1">
+                                <span v-if="!searchQuery">Curated for You</span>
+                                <span v-else>Results for "<span class="text-ph-orange">{{ searchQuery }}</span>"</span>
+                            </h2>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest font-mono">
+                                Match Score: {{ averageMatchScore }}% • Vibe: {{ userVibe }}
+                            </p>
+                        </div>
+                        <div class="flex gap-2">
+                             <button @click="refreshFeed" class="p-2 text-gray-500 hover:text-white transition-colors" title="Refresh Feed">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tags Pill List -->
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            v-for="tag in activeTags"
+                            :key="tag"
+                            @click="searchTag(tag)"
+                            class="px-3 py-1 bg-ph-light border border-gray-800 rounded-full text-xs text-gray-400 hover:text-white hover:border-ph-orange cursor-pointer transition-all"
+                        >
+                            {{ tag }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Video Grid -->
+                <div v-if="!currentVideo" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div
+                        v-for="video in videos"
+                        :key="video.video_id"
+                        class="card-hover group relative bg-ph-light rounded-xl overflow-hidden cursor-pointer"
+                        @click="openVideo(video)"
+                    >
+                        <!-- Image -->
+                        <div class="aspect-video relative bg-black overflow-hidden">
+                            <img :src="video.thumb" loading="lazy" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500">
+
+                            <!-- Overlays -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+
+                            <!-- Duration -->
+                            <div class="absolute bottom-2 right-2 bg-black/80 backdrop-blur text-white text-[10px] font-bold px-1.5 py-0.5 rounded font-mono border border-white/10">
+                                {{ video.duration }}
+                            </div>
+
+                            <!-- Match Score Badge -->
+                            <div v-if="video.matchScore" class="absolute top-2 right-2 bg-green-900/90 text-green-100 text-[10px] font-bold px-2 py-0.5 rounded-full border border-green-700/50 shadow-lg backdrop-blur flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                                {{ video.matchScore }}%
+                            </div>
+
+                            <!-- Source -->
+                            <div v-if="source === 'hybrid'" class="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-black/50 backdrop-blur text-[10px] font-bold text-gray-300 uppercase">
+                                {{ video.source === 'redtube' ? 'RT' : 'PH' }}
+                            </div>
+                        </div>
+
+                        <!-- Meta -->
+                        <div class="p-4">
+                            <h3 class="text-sm font-semibold text-gray-200 line-clamp-2 leading-snug group-hover:text-ph-orange transition-colors mb-2" :title="video.title">
+                                {{ video.title }}
+                            </h3>
+                            <div class="flex items-center justify-between text-xs text-gray-500 font-mono">
+                                <span>{{ formatViews(video.views) }}</span>
+                                <span :class="{'text-green-500': video.rating > 80}">{{ video.rating }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div v-if="loading" class="flex justify-center items-center py-20">
+                    <div class="relative w-16 h-16">
+                        <div class="absolute inset-0 border-4 border-gray-800 rounded-full"></div>
+                        <div class="absolute inset-0 border-4 border-ph-orange rounded-full border-t-transparent animate-spin"></div>
+                    </div>
+                </div>
+
+                 <!-- Pagination / Load More -->
+                <div v-if="!currentVideo && !loading && videos.length > 0" class="flex justify-center mt-12 mb-20">
+                    <button @click="loadNextPage" class="px-8 py-3 bg-ph-light border border-gray-700 rounded-full text-sm font-bold hover:bg-white hover:text-black transition-all shadow-lg btn-press">
+                        Load More Content
+                    </button>
+                </div>
+
+                <!-- Video Player Overlay -->
+                <transition name="fade">
+                    <div v-if="currentVideo" class="fixed inset-0 z-[60] bg-black/95 overflow-y-auto backdrop-blur-sm">
+                        <div class="min-h-screen flex flex-col">
+                            <!-- Header -->
+                            <div class="p-4 flex justify-between items-center bg-black/50 border-b border-gray-800">
+                                <button @click="closeVideo" class="text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                    <span class="text-sm font-bold uppercase tracking-wide">Return</span>
+                                </button>
+                                <div class="text-xs text-gray-500 font-mono">
+                                    Playing from {{ currentVideo.source === 'redtube' ? 'RedTube' : 'Pornhub' }}
+                                </div>
+                            </div>
+
+                            <!-- Player Container -->
+                            <div class="flex-grow flex items-center justify-center p-4 lg:p-10">
+                                <div class="w-full max-w-6xl space-y-6">
+                                    <!-- Aspect Ratio Box -->
+                                    <div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-gray-800">
+                                        <iframe
+                                            v-if="videoDetails && videoDetails.embed_url"
+                                            :src="videoDetails.embed_url"
+                                            class="absolute inset-0 w-full h-full"
+                                            frameborder="0"
+                                            scrolling="no"
+                                            allowfullscreen>
+                                        </iframe>
+                                        <div v-else class="flex items-center justify-center h-full text-gray-500 animate-pulse">
+                                            Loading Secure Stream...
+                                        </div>
+                                    </div>
+
+                                    <!-- Video Info -->
+                                    <div class="max-w-4xl mx-auto">
+                                        <div class="flex items-start justify-between gap-4 mb-4">
+                                            <h1 class="text-2xl md:text-3xl font-bold text-white leading-tight">{{ currentVideo.title }}</h1>
+                                            <!-- Action Buttons -->
+                                            <div class="flex gap-2 shrink-0">
+                                                 <button class="p-2 rounded bg-ph-light border border-gray-700 hover:text-ph-orange transition-colors" title="Save to Favorites (Local)">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Stats Line -->
+                                        <div class="flex flex-wrap gap-6 text-sm text-gray-400 font-mono border-b border-gray-800 pb-6 mb-6">
+                                            <span class="flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                                {{ formatViews(currentVideo.views) }}
+                                            </span>
+                                            <span class="flex items-center gap-2 text-green-500">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
+                                                {{ currentVideo.rating }}%
+                                            </span>
+                                            <span class="flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                {{ currentVideo.duration }}
+                                            </span>
+                                        </div>
+
+                                        <!-- Tags -->
+                                        <div v-if="videoDetails && videoDetails.tags" class="flex flex-wrap gap-2">
+                                            <button
+                                                v-for="tag in videoDetails.tags"
+                                                :key="tag"
+                                                @click="searchTag(tag)"
+                                                class="px-3 py-1 bg-ph-light border border-gray-800 rounded hover:border-ph-orange hover:text-white text-xs text-gray-400 transition-all"
+                                            >
+                                                #{{ tag }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted, computed, watch } = Vue;
+
+        createApp({
+            setup() {
+                // --- State ---
+                const searchQuery = ref('');
+                const videos = ref([]);
+                const loading = ref(false);
+                const page = ref(1);
+
+                // Config
+                const source = ref('pornhub'); // pornhub, redtube, hybrid
+                const ordering = ref('mostviewed');
+                const showOnboarding = ref(false);
+                const onboardingStep = ref(1);
+                const isScrolled = ref(false);
+
+                // Profile & Bio-Engine
+                const userVibe = ref('intense');
+                const currentMood = ref('relaxed'); // relaxed, horny, stressed
+                const prefs = ref({
+                    intensity: 5,
+                    novelty: 5,
+                    history: [] // {id, tags, ts}
+                });
+
+                // Video Player
+                const currentVideo = ref(null);
+                const videoDetails = ref(null);
+
+                // --- Computed ---
+                const dynamicPlaceholder = computed(() => {
+                    const prompts = [
+                        `Search ${userVibe.value} scenes...`,
+                        "What do you desire?",
+                        "Explore 4K content...",
+                        "Find your match..."
+                    ];
+                    return prompts[Math.floor(Math.random() * prompts.length)];
+                });
+
+                const activeTags = computed(() => {
+                    const map = {
+                        'intense': ['hardcore', 'rough', 'fast', 'loud', 'intense', 'threesome'],
+                        'soft': ['passionate', 'romantic', 'sensual', 'massage', 'kissing'],
+                        'retro': ['vintage', 'classic', '80s', '90s', 'retro', 'oldschool'],
+                        'amateur': ['homemade', 'pov', 'amateur', 'couple', 'real', 'verified']
+                    };
+                    return map[userVibe.value] || [];
+                });
+
+                const averageMatchScore = computed(() => {
+                    if (videos.value.length === 0) return 0;
+                    const sum = videos.value.reduce((acc, v) => acc + (v.matchScore || 0), 0);
+                    return Math.floor(sum / videos.value.length);
+                });
+
+                const moodColor = computed(() => {
+                    if (currentMood.value === 'horny') return 'bg-red-500';
+                    if (currentMood.value === 'relaxed') return 'bg-blue-400';
+                    return 'bg-yellow-500';
+                });
+
+                // --- Lifecycle ---
+
+                onMounted(() => {
+                    // Check local storage for profile
+                    const storedVibe = localStorage.getItem('pacp_vibe');
+                    if (storedVibe) {
+                        userVibe.value = storedVibe;
+                        const storedPrefs = localStorage.getItem('pacp_prefs');
+                        if (storedPrefs) prefs.value = JSON.parse(storedPrefs);
+                        fetchVideos(true);
+                    } else {
+                        showOnboarding.value = true;
+                    }
+
+                    window.addEventListener('scroll', () => {
+                        isScrolled.value = window.scrollY > 10;
+                    });
+
+                    // Initial Mood check (Time of day heuristic)
+                    const hour = new Date().getHours();
+                    if (hour >= 22 || hour < 6) currentMood.value = 'relaxed';
+                    else if (hour >= 18) currentMood.value = 'horny';
+                    else currentMood.value = 'relaxed';
+                });
+
+                // --- Methods: Onboarding ---
+
+                const setVibe = (vibe) => {
+                    userVibe.value = vibe;
+                    onboardingStep.value = 2;
+                };
+
+                const finishOnboarding = () => {
+                    localStorage.setItem('pacp_vibe', userVibe.value);
+                    localStorage.setItem('pacp_prefs', JSON.stringify(prefs.value));
+                    showOnboarding.value = false;
+                    fetchVideos(true);
+                };
+
+                const setMood = (m) => {
+                    currentMood.value = m;
+                    // Trigger re-rank or re-fetch?
+                    // Ideally, mood changes the weighting logic. For now, let's refresh search.
+                    fetchVideos(true);
+                };
+
+                const toggleSource = () => {
+                    if (source.value === 'pornhub') source.value = 'redtube';
+                    else if (source.value === 'redtube') source.value = 'hybrid';
+                    else source.value = 'pornhub';
+                    fetchVideos(true);
+                };
+
+                // --- Methods: Bio-Engine (Ranking) ---
+
+                const calculateBioScore = (video) => {
+                    // Start with base relevance (randomized for demo, would be Jaccard index in real app)
+                    let score = 80 + Math.floor(Math.random() * 20);
+
+                    // Mood Modifiers
+                    if (currentMood.value === 'relaxed') {
+                        // Boost longer, softer content
+                        // (Fake logic since we don't have deep metadata analysis client-side yet)
+                        if (video.duration && parseInt(video.duration) > 15) score += 5;
+                    }
+                    if (currentMood.value === 'horny') {
+                        // Boost high rated
+                        if (video.rating > 90) score += 5;
+                    }
+
+                    // Vibe Match
+                    const videoTitleLower = video.title.toLowerCase();
+                    const vibeKeywords = activeTags.value;
+                    const match = vibeKeywords.some(k => videoTitleLower.includes(k));
+                    if (match) score += 10;
+
+                    return Math.min(99, score);
+                };
+
+                // --- Methods: API & Logic ---
+
+                const formatViews = (num) => {
+                    if (!num) return '0';
+                    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+                    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+                    return num;
+                };
+
+                const fetchVideos = async (reset = false) => {
+                    if (reset) {
+                        page.value = 1;
+                        videos.value = [];
+                    }
+                    loading.value = true;
+
+                    try {
+                        let q = searchQuery.value;
+
+                        // Intelligent Query Injection if empty
+                        if (!q) {
+                            // Pick a random tag from vibe
+                            const tags = activeTags.value;
+                            if (tags.length) q = tags[Math.floor(Math.random() * tags.length)];
+                            else q = "4k";
+                        }
+
+                        // Force 4k preference
+                        if (!q.toLowerCase().includes('4k')) q += " 4k";
+
+                        const params = new URLSearchParams({
+                            q: q,
+                            page: page.value,
+                            ordering: ordering.value,
+                            source: source.value
+                        });
+
+                        const res = await fetch(`/api/search?${params.toString()}`);
+                        if (!res.ok) throw new Error('API Error');
+                        const data = await res.json();
+
+                        // Client-side Processing & Bio-Ranking
+                        const processed = data.videos.map(v => ({
+                            ...v,
+                            matchScore: calculateBioScore(v)
+                        }));
+
+                        // Sort by Match Score (Bio-Ranking)
+                        processed.sort((a, b) => b.matchScore - a.matchScore);
+
+                        if (reset) {
+                            videos.value = processed;
+                        } else {
+                            videos.value = [...videos.value, ...processed];
+                        }
+
+                    } catch (e) {
+                        console.error(e);
+                    } finally {
+                        loading.value = false;
+                    }
+                };
+
+                const performSearch = () => {
+                    currentVideo.value = null;
+                    fetchVideos(true);
+                };
+
+                const loadNextPage = () => {
+                    page.value++;
+                    fetchVideos(false);
+                };
+
+                const refreshFeed = () => {
+                    fetchVideos(true);
+                };
+
+                const searchTag = (tag) => {
+                    searchQuery.value = tag;
+                    performSearch();
+                };
+
+                const goHome = () => {
+                    searchQuery.value = '';
+                    currentVideo.value = null;
+                    fetchVideos(true);
+                };
+
+                const openVideo = async (video) => {
+                    currentVideo.value = video;
+                    videoDetails.value = null;
+                    // Track history
+                    prefs.value.history.unshift({
+                        id: video.video_id,
+                        title: video.title,
+                        ts: Date.now()
+                    });
+                    if (prefs.value.history.length > 50) prefs.value.history.pop();
+                    localStorage.setItem('pacp_prefs', JSON.stringify(prefs.value));
+
+                    try {
+                        const params = new URLSearchParams({ source: video.source || 'pornhub' });
+                        const res = await fetch(`/api/video/${video.video_id}?${params.toString()}`);
+                        if (res.ok) videoDetails.value = await res.json();
+                    } catch (e) {
+                        console.error(e);
+                    }
+                };
+
+                const closeVideo = () => {
+                    currentVideo.value = null;
+                    videoDetails.value = null;
+                };
+
+                return {
+                    searchQuery,
+                    videos,
+                    loading,
+                    source,
+                    currentVideo,
+                    videoDetails,
+                    showOnboarding,
+                    onboardingStep,
+                    userVibe,
+                    currentMood,
+                    prefs,
+                    isScrolled,
+                    dynamicPlaceholder,
+                    activeTags,
+                    averageMatchScore,
+                    moodColor,
+
+                    setVibe,
+                    finishOnboarding,
+                    setMood,
+                    toggleSource,
+                    performSearch,
+                    loadNextPage,
+                    refreshFeed,
+                    searchTag,
+                    goHome,
+                    openVideo,
+                    closeVideo,
+                    formatViews
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
