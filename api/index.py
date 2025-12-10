@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from pornhub_api import PornhubApi
 from pornhub_api.backends.aiohttp import AioHttpBackend
 from typing import List, Optional, Dict, Any
@@ -13,23 +13,21 @@ import random
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # Import RedTube API
-# (We need to ensure api/redtube.py exists in the PYTHONPATH or relative import works)
 try:
     from api.redtube import RedTubeApi
 except ImportError:
-    # Fallback for local run structure vs vercel structure
     try:
-        from api.redtube import RedTubeApi
+        from redtube import RedTubeApi
     except ImportError:
          sys.path.append(os.path.dirname(__file__))
-         from api.redtube import RedTubeApi
+         from redtube import RedTubeApi
 
 app = FastAPI()
 
-# Mount the public directory for static files (important for local dev)
+# Mount the public directory for static files
+# In Vercel, the filesystem is read-only, but we can read included files.
 public_path = os.path.join(os.path.dirname(__file__), '../public')
 if not os.path.exists(public_path):
-    # In Vercel, sometimes paths are tricky. Let's try to find public relative to current file.
     public_path = os.path.join(os.getcwd(), 'public')
 
 if os.path.exists(public_path):
@@ -42,14 +40,10 @@ async def search_videos(
     ordering: str = "mostviewed",
     period: str = "alltime",
     tags: Optional[List[str]] = Query(None),
-    source: str = "pornhub" # pornhub, redtube, hybrid
+    source: str = "pornhub"
 ):
     query = q if q else "4k"
 
-    # Define tasks
-    tasks = []
-
-    # Task for Pornhub
     async def fetch_pornhub():
         async with AioHttpBackend() as backend:
             api = PornhubApi(backend=backend)
@@ -82,7 +76,6 @@ async def search_videos(
                 print(f"Pornhub error: {e}")
                 return []
 
-    # Task for RedTube
     async def fetch_redtube():
         api = RedTubeApi()
         try:
@@ -105,9 +98,6 @@ async def search_videos(
         results = await fetch_redtube()
     elif source == "hybrid":
         ph_res, rt_res = await asyncio.gather(fetch_pornhub(), fetch_redtube())
-
-        # Interleave results for a better hybrid experience
-        # e.g. [ph1, rt1, ph2, rt2, ...]
         max_len = max(len(ph_res), len(rt_res))
         for i in range(max_len):
             if i < len(ph_res):
@@ -115,7 +105,6 @@ async def search_videos(
             if i < len(rt_res):
                 results.append(rt_res[i])
     else:
-        # Default to PH
         results = await fetch_pornhub()
 
     return {"videos": results, "count": len(results)}
@@ -128,13 +117,11 @@ async def get_video_details(video_id: str, source: str = "pornhub"):
         if not vid:
             raise HTTPException(status_code=404, detail="Video not found")
         return vid
-
-    else: # Default or explicitly Pornhub
+    else:
         async with AioHttpBackend() as backend:
             api = PornhubApi(backend=backend)
             try:
                 vid = await api.video.get_by_id(video_id)
-
                 return {
                     "title": vid.title,
                     "video_id": vid.video_id,
@@ -151,8 +138,6 @@ async def get_video_details(video_id: str, source: str = "pornhub"):
                     "source": "pornhub"
                 }
             except Exception as e:
-                # Fallback: sometimes ID might be RedTube passed without source param?
-                # But we should rely on client sending correct source.
                 raise HTTPException(status_code=404, detail="Video not found or API error")
 
 @app.get("/api/tags")
@@ -165,21 +150,26 @@ async def get_tags(start: str = "a"):
         except Exception as e:
              raise HTTPException(status_code=500, detail=str(e))
 
-# Catch-all route to serve the frontend for any non-api path
-@app.get("/{full_path:path}")
-async def catch_all(full_path: str):
-    # If the request matches a file in public, serve it (fallback for when app.mount didn't catch it?)
-    # But usually app.mount handles it if the path matches /public.
-    # We want to serve index.html for root and unknown paths (SPA behavior)
+# Health Check
+@app.get("/api/health")
+async def health_check():
+    return {"status": "ok"}
 
-    # Try to find the file
+# Catch-all for Frontend
+@app.get("/{full_path:path}")
+async def catch_all(full_path: str, request: Request):
+    # If path starts with /api/, return 404 because it's a missing API route
+    if full_path.startswith("api/"):
+        return JSONResponse({"error": "Not Found"}, status_code=404)
+
+    # Check for static file in public
     possible_path = os.path.join(public_path, full_path)
     if os.path.isfile(possible_path):
         return FileResponse(possible_path)
 
-    # Otherwise serve index.html
+    # Default to index.html (SPA Fallback)
     index_path = os.path.join(public_path, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
 
-    return HTMLResponse(content="<h1>Frontend not found</h1>", status_code=404)
+    return HTMLResponse(content="<h1>Error: Frontend not found.</h1>", status_code=500)
