@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pornhub 4K Viewer</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ph: {
+                            orange: '#ffa31a',
+                            black: '#1b1b1b',
+                            dark: '#0f0f0f',
+                            gray: '#282828'
+                        },
+                        rt: {
+                            red: '#cc0000'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: white;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1b1b1b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ffa31a;
+        }
+        .aspect-video {
+            aspect-ratio: 16 / 9;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <div id="app" class="flex-grow flex flex-col">
+
+        <!-- Navbar -->
+        <nav class="bg-ph-black border-b border-ph-gray sticky top-0 z-50 shadow-lg">
+            <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2 cursor-pointer" @click="goHome">
+                    <div class="bg-white text-black font-bold px-1 rounded-sm text-xl tracking-tighter">PH</div>
+                    <div class="text-white font-bold text-xl tracking-tighter">Viewer<span class="text-ph-orange">4K</span></div>
+                </div>
+
+                <!-- Search -->
+                <div class="flex-1 max-w-2xl mx-4">
+                    <form @submit.prevent="performSearch" class="relative">
+                        <input
+                            v-model="searchQuery"
+                            type="text"
+                            placeholder="Search videos..."
+                            class="w-full bg-ph-gray text-white px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-ph-orange transition-all"
+                        >
+                        <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-ph-orange">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Filters Toggle -->
+                <button @click="showFilters = !showFilters" class="text-gray-300 hover:text-ph-orange md:hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Extended Filters -->
+            <div v-if="showFilters || windowWidth >= 768" :class="{'hidden': !showFilters && windowWidth < 768}" class="bg-ph-gray border-b border-black py-2">
+                <div class="container mx-auto px-4 flex flex-wrap gap-4 items-center justify-center text-sm">
+
+                    <!-- Source Selection -->
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">Source:</span>
+                        <select v-model="source" @change="performSearch" class="bg-ph-black text-white px-2 py-1 rounded border border-gray-700 focus:border-ph-orange outline-none">
+                            <option value="pornhub">Pornhub</option>
+                            <option value="redtube">RedTube</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">Order By:</span>
+                        <select v-model="ordering" @change="performSearch" class="bg-ph-black text-white px-2 py-1 rounded border border-gray-700 focus:border-ph-orange outline-none">
+                            <option value="mostviewed">Most Viewed</option>
+                            <option value="rating">Top Rated</option>
+                            <option value="newest">Newest</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">Period:</span>
+                        <select v-model="period" @change="performSearch" class="bg-ph-black text-white px-2 py-1 rounded border border-gray-700 focus:border-ph-orange outline-none">
+                            <option value="alltime">All Time</option>
+                            <option value="monthly">This Month</option>
+                            <option value="weekly">This Week</option>
+                            <option value="daily">Today</option>
+                        </select>
+                    </div>
+                    <label class="flex items-center space-x-2 cursor-pointer select-none">
+                        <input type="checkbox" v-model="force4k" @change="performSearch" class="form-checkbox text-ph-orange rounded bg-ph-black border-gray-700">
+                        <span class="text-ph-orange font-bold">4K Only</span>
+                    </label>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-6 flex-grow">
+
+            <!-- Loading State -->
+            <div v-if="loading" class="flex justify-center items-center h-64">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-ph-orange"></div>
+            </div>
+
+            <!-- Error State -->
+            <div v-if="error" class="text-center text-red-500 py-10">
+                {{ error }}
+            </div>
+
+            <!-- Video Grid -->
+            <div v-if="!currentVideo && !loading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div
+                    v-for="video in videos"
+                    :key="video.video_id"
+                    class="group bg-ph-gray rounded-lg overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-ph-orange/20 transition-all transform hover:-translate-y-1"
+                    @click="openVideo(video)"
+                >
+                    <!-- Thumbnail Container -->
+                    <div class="relative aspect-video bg-black overflow-hidden">
+                        <img :src="video.thumb" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1 rounded">
+                            {{ video.duration }}
+                        </div>
+
+                        <!-- Source Badge -->
+                        <div v-if="source === 'hybrid'" class="absolute top-1 left-1 text-black text-xs font-bold px-1 rounded" :class="video.source === 'redtube' ? 'bg-rt-red text-white' : 'bg-ph-orange'">
+                            {{ video.source === 'redtube' ? 'RedTube' : 'PH' }}
+                        </div>
+
+                        <!-- HD/4K Badge Mockup (logic based) -->
+                        <div class="absolute top-1 right-1 bg-ph-orange text-black text-xs font-bold px-1 rounded">
+                            HD
+                        </div>
+                    </div>
+
+                    <!-- Meta -->
+                    <div class="p-3">
+                        <h3 class="text-sm font-medium text-white line-clamp-2 group-hover:text-ph-orange transition-colors" :title="video.title">
+                            {{ video.title }}
+                        </h3>
+                        <div class="mt-2 flex justify-between items-center text-xs text-gray-400">
+                            <span>{{ formatViews(video.views) }} views</span>
+                            <span>{{ video.rating }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination / Load More (Simple implementation) -->
+            <div v-if="!currentVideo && !loading && videos.length > 0" class="flex justify-center mt-8">
+                <button @click="loadNextPage" class="bg-ph-gray hover:bg-ph-orange text-white hover:text-black font-bold py-2 px-6 rounded-full transition-colors border border-gray-600">
+                    Load More
+                </button>
+            </div>
+
+            <!-- Video Player View -->
+            <div v-if="currentVideo" class="max-w-5xl mx-auto w-full">
+                <button @click="closeVideo" class="mb-4 text-gray-400 hover:text-white flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Back to results
+                </button>
+
+                <div class="bg-ph-gray rounded-xl overflow-hidden shadow-2xl">
+                    <!-- The Player -->
+                    <div class="relative w-full aspect-video bg-black">
+                         <iframe
+                            v-if="videoDetails && videoDetails.embed_url"
+                            :src="videoDetails.embed_url"
+                            frameborder="0"
+                            width="100%"
+                            height="100%"
+                            scrolling="no"
+                            allowfullscreen>
+                        </iframe>
+                        <div v-else class="flex items-center justify-center h-full text-gray-500">
+                            Loading Player...
+                        </div>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="p-6">
+                        <h1 class="text-2xl font-bold text-white mb-2">{{ currentVideo.title }}</h1>
+                        <div class="flex flex-wrap gap-4 text-sm text-gray-400 mb-4 border-b border-gray-700 pb-4">
+                            <span class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" /></svg>
+                                {{ formatViews(currentVideo.views) }}
+                            </span>
+                            <span class="flex items-center text-green-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" /></svg>
+                                {{ currentVideo.rating }}%
+                            </span>
+                             <span>{{ currentVideo.duration }}</span>
+                             <span class="capitalize text-ph-orange">{{ currentVideo.source }}</span>
+                        </div>
+
+                        <!-- Tags -->
+                        <div v-if="videoDetails && videoDetails.tags" class="flex flex-wrap gap-2">
+                            <span v-for="tag in videoDetails.tags" :key="tag" class="bg-gray-800 hover:bg-ph-orange hover:text-black text-xs px-3 py-1 rounded-full cursor-pointer transition-colors" @click="searchTag(tag)">
+                                {{ tag }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="bg-ph-black py-6 mt-8 border-t border-ph-gray">
+            <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+                <p>&copy; 2023 Unofficial Viewer. This project uses the pornhub-api library.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted, computed, watch } = Vue;
+
+        createApp({
+            setup() {
+                const searchQuery = ref('');
+                const videos = ref([]);
+                const loading = ref(false);
+                const error = ref(null);
+                const page = ref(1);
+
+                // Filters
+                const ordering = ref('mostviewed');
+                const period = ref('alltime');
+                const showFilters = ref(false);
+                const force4k = ref(true); // Default to 4K preference as requested
+                const source = ref('pornhub'); // Source selection
+
+                // Window width for responsive filters
+                const windowWidth = ref(window.innerWidth);
+
+                // Video Player State
+                const currentVideo = ref(null);
+                const videoDetails = ref(null);
+
+                // Helper: Format large numbers
+                const formatViews = (num) => {
+                    if (!num) return '0';
+                    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+                    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+                    return num;
+                };
+
+                const fetchVideos = async (reset = false) => {
+                    if (reset) {
+                        page.value = 1;
+                        videos.value = [];
+                    }
+
+                    loading.value = true;
+                    error.value = null;
+
+                    try {
+                        let q = searchQuery.value;
+                        if (force4k.value && !q.toLowerCase().includes('4k')) {
+                            q = q ? `${q} 4k` : '4k';
+                        }
+
+                        const params = new URLSearchParams({
+                            q: q || '4k', // Default query if empty
+                            page: page.value,
+                            ordering: ordering.value,
+                            period: period.value,
+                            source: source.value
+                        });
+
+                        const res = await fetch(`/api/search?${params.toString()}`);
+                        if (!res.ok) throw new Error('Failed to fetch videos');
+
+                        const data = await res.json();
+
+                        if (reset) {
+                            videos.value = data.videos;
+                        } else {
+                            videos.value = [...videos.value, ...data.videos];
+                        }
+
+                    } catch (err) {
+                        console.error(err);
+                        error.value = "Error loading videos. Please try again.";
+                    } finally {
+                        loading.value = false;
+                    }
+                };
+
+                const performSearch = () => {
+                    currentVideo.value = null; // Close player on new search
+                    fetchVideos(true);
+                };
+
+                const loadNextPage = () => {
+                    page.value++;
+                    fetchVideos(false);
+                };
+
+                const openVideo = async (video) => {
+                    currentVideo.value = video;
+                    videoDetails.value = null; // Reset details
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    // Fetch full details (for embed url and more tags)
+                    try {
+                        const params = new URLSearchParams({
+                            source: video.source || 'pornhub'
+                        });
+                        const res = await fetch(`/api/video/${video.video_id}?${params.toString()}`);
+                        if (res.ok) {
+                            videoDetails.value = await res.json();
+                        }
+                    } catch (e) {
+                        console.error("Failed to fetch video details", e);
+                    }
+                };
+
+                const closeVideo = () => {
+                    currentVideo.value = null;
+                    videoDetails.value = null;
+                };
+
+                const searchTag = (tag) => {
+                    searchQuery.value = tag;
+                    performSearch();
+                };
+
+                const goHome = () => {
+                    searchQuery.value = '';
+                    currentVideo.value = null;
+                    performSearch();
+                };
+
+                // Resize listener
+                window.addEventListener('resize', () => {
+                    windowWidth.value = window.innerWidth;
+                });
+
+                // Initial Load
+                onMounted(() => {
+                    fetchVideos(true);
+                });
+
+                return {
+                    searchQuery,
+                    videos,
+                    loading,
+                    error,
+                    ordering,
+                    period,
+                    showFilters,
+                    force4k,
+                    source, // Expose source to template
+                    windowWidth,
+                    currentVideo,
+                    videoDetails,
+                    performSearch,
+                    loadNextPage,
+                    formatViews,
+                    openVideo,
+                    closeVideo,
+                    searchTag,
+                    goHome
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
