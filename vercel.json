@@ -1,4 +1,5 @@
 {
+  "installCommand": "pip install -r requirements.txt",
   "rewrites": [
     {
       "source": "/(.*)",
